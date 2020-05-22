@@ -23,7 +23,7 @@ final class Testing extends TestCase
         // Assertions in mock
 
         $mockedIterator = $this->addIterableValuesToMock(
-            $this->createMock(\Iterator::class), // Your iterable mocked class
+            $this->createMock(\Iterator::class), // Your iterable mock
             [
                 $mockedItem1,
                 $mockedItem2,
@@ -53,7 +53,7 @@ final class Testing extends TestCase
         $valueToReturnOnSerialize = 'some compatible with serialization method declared';
 
         $serializableMock = $this->addJsonSerializationToMock( 
-            $this->createMock(\JsonSerializable::class), // Your class to mock which implements jsonSerialize method 
+            $this->createMock(\JsonSerializable::class), // Your mock which implements jsonSerialize method 
             $this->once(), // Or other InvocationOrder
             $valueToReturnOnSerialize,
         );
