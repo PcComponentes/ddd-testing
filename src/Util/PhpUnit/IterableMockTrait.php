@@ -23,7 +23,7 @@ trait IterableMockTrait
         $mock
             ->expects(
                 new InvokedCount($nValues),
-                )
+            )
             ->method(self::returnCurrentElementMethod())
             ->willReturn(... $returnedValues)
         ;
@@ -31,11 +31,11 @@ trait IterableMockTrait
         $mock
             ->expects(
                 new InvokedCount($nValues + 1),
-                )
+            )
             ->method(self::currentPositionValidMethod())
             ->willReturn(
                 ... $this->valuesThatCheckValidWillReturn($nValues),
-                )
+            )
         ;
 
         return $mock;
