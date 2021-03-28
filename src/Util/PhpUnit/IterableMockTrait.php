@@ -8,8 +8,11 @@ use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 
 trait IterableMockTrait
 {
-    private function addIterableValuesToMock(MockObject $mock, array $returnedValues): MockObject
-    {
+    private function addIterableValuesToMock(
+        MockObject $mock,
+        array $returnedValues,
+        int $expectedIterations = 1
+    ): MockObject {
         if (false === $mock instanceof \Iterator) {
             throw new \Exception('Mock object not implements \Iterator');
         }
@@ -20,34 +23,42 @@ trait IterableMockTrait
 
         $nValues = \count($returnedValues);
 
+        $totalNValues = $nValues * $expectedIterations;
+        $totalReturnValues = $returnedValues;
+        for ($i = 1; $i < $expectedIterations; $i++) {
+            \array_push($totalReturnValues, ...$returnedValues);
+        }
+
         $mock
             ->expects(
-                new InvokedCount($nValues),
+                new InvokedCount($totalNValues),
             )
             ->method(self::returnCurrentElementMethod())
-            ->willReturn(... $returnedValues)
+            ->willReturn(...$totalReturnValues)
         ;
 
         $mock
             ->expects(
-                new InvokedCount($nValues + 1),
+                new InvokedCount($totalNValues + $expectedIterations),
             )
             ->method(self::currentPositionValidMethod())
             ->willReturn(
-                ... $this->valuesThatCheckValidWillReturn($nValues),
+                ... $this->valuesThatCheckValidWillReturn($nValues, $expectedIterations),
             )
         ;
 
         return $mock;
     }
 
-    private function valuesThatCheckValidWillReturn(int $nValues): array
+    private function valuesThatCheckValidWillReturn(int $nValues,  int $expectedIterations): array
     {
         $values = [];
-        for($i = 0; $i < $nValues; $i++) {
-            $values[] = true;
+        for ($j = 0; $j < $expectedIterations; $j++) {
+            for ($i = 0; $i < $nValues; $i++) {
+                $values[] = true;
+            }
+            $values[] = false;
         }
-        $values[] = false;
 
         return $values;
     }
